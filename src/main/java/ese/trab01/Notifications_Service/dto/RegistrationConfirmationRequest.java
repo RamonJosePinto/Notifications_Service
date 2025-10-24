@@ -4,6 +4,5 @@ import lombok.Builder;
 
 @Builder
 public record RegistrationConfirmationRequest(
-        String recipientEmail,
-        String userName
+        Long participantId
 ) {}

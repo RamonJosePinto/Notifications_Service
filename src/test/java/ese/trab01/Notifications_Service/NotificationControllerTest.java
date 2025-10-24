@@ -2,112 +2,118 @@ package ese.trab01.Notifications_Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ese.trab01.Notifications_Service.controller.NotificationController;
-import ese.trab01.Notifications_Service.dto.NotificationResponseDto;
+import ese.trab01.Notifications_Service.dto.*;
 import ese.trab01.Notifications_Service.model.NotificationChannel;
 import ese.trab01.Notifications_Service.model.NotificationStatus;
 import ese.trab01.Notifications_Service.model.NotificationType;
 import ese.trab01.Notifications_Service.service.NotificationService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.OffsetDateTime;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@WebMvcTest(NotificationController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class NotificationControllerTest {
 
+    @Autowired
     private MockMvc mvc;
+
+    @Autowired
     private ObjectMapper om;
-    private NotificationService service; // mock
-    private NotificationController controller;
 
-    @BeforeEach
-    void setup() {
-        service = Mockito.mock(NotificationService.class);
-        controller = new NotificationController(service);
-        mvc = MockMvcBuilders.standaloneSetup(controller).build();
-        om = new ObjectMapper();
+    @MockitoBean
+    private NotificationService service;
+
+    private NotificationResponseDto sampleDto(long id) {
+        return new NotificationResponseDto(
+                id,
+                NotificationType.PURCHASE_CONFIRMATION,
+                NotificationChannel.EMAIL,
+                NotificationStatus.PENDING,
+                23L,             // participantId
+                1L,              // eventId
+                10L,             // ticketId
+                null,            // recipient (mockado, opcional)
+                "Assunto",
+                "Mensagem",
+                OffsetDateTime.now(),
+                null             // sentAt
+        );
     }
 
     @Test
-    void purchase_deveRetornar200() throws Exception {
-        when(service.sendPurchaseConfirmation(any()))
-                .thenReturn(new NotificationResponseDto(1L, NotificationType.PURCHASE_CONFIRMATION,
-                        NotificationChannel.EMAIL, "ramon@example.com", "Confirmação", "ok",
-                        NotificationStatus.SENT, null, null));
+    void purchaseConfirmation_deveRetornar204() throws Exception {
+        doNothing().when(service).purchaseConfirmation(any(PurchaseConfirmationRequest.class));
 
-        var body = """
-            {"recipientEmail":"ramon@example.com","eventId":1001,"reservationId":10,"quantity":2}
-        """;
+        var req = new PurchaseConfirmationRequest(23L, 1L, 10L);
 
-        mvc.perform(post("/notifications/purchase")
+        mvc.perform(post("/notifications/purchase-confirmation")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
-                .andExpect(status().isOk());
+                        .content(om.writeValueAsString(req)))
+                .andExpect(status().isNoContent());
     }
 
     @Test
-    void registration_deveRetornar200() throws Exception {
-        when(service.sendRegistrationConfirmation(any()))
-                .thenReturn(new NotificationResponseDto(2L, NotificationType.REGISTRATION_CONFIRMATION,
-                        NotificationChannel.EMAIL, "u@ex.com", "Cadastro", "ok",
-                        NotificationStatus.SENT, null, null));
+    void registrationConfirmation_deveRetornar204() throws Exception {
+        doNothing().when(service).registrationConfirmation(any(RegistrationConfirmationRequest.class));
 
-        var body = """
-            {"recipientEmail":"u@ex.com","userName":"Ramon"}
-        """;
+        var req = new RegistrationConfirmationRequest(23L);
 
-        mvc.perform(post("/notifications/registration")
+        mvc.perform(post("/notifications/registration-confirmation")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
-                .andExpect(status().isOk());
+                        .content(om.writeValueAsString(req)))
+                .andExpect(status().isNoContent());
     }
 
     @Test
-    void reminder_deveRetornar200() throws Exception {
-        when(service.sendEventReminder(any()))
-                .thenReturn(new NotificationResponseDto(3L, NotificationType.EVENT_REMINDER,
-                        NotificationChannel.EMAIL, "u@ex.com", "Lembrete", "ok",
-                        NotificationStatus.SENT, null, null));
+    void eventReminder_deveRetornar204() throws Exception {
+        doNothing().when(service).eventReminder(any(EventReminderRequest.class));
 
-        var body = """
-            {"recipientEmail":"u@ex.com","eventId":999,"eventName":"Show","eventDateTime":"2030-01-01T12:00:00Z"}
-        """;
+        var req = new EventReminderRequest(23L, 1L, null, null);
 
-        mvc.perform(post("/notifications/reminder")
+        mvc.perform(post("/notifications/event-reminder")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(body))
-                .andExpect(status().isOk());
+                        .content(om.writeValueAsString(req)))
+                .andExpect(status().isNoContent());
     }
 
     @Test
-    void list_deveRetornar200() throws Exception {
-        // Aqui não precisamos mockar retorno de Page para validar o status 200 no standalone
+    void getById_deveRetornar200_comCorpo() throws Exception {
+        Mockito.when(service.getById(5L)).thenReturn(sampleDto(5));
+
+        mvc.perform(get("/notifications/5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(5));
+    }
+
+    @Test
+    void list_deveRetornar200_paginado() throws Exception {
+        Page<NotificationResponseDto> page =
+                new PageImpl<>(List.of(sampleDto(1), sampleDto(2)), PageRequest.of(0, 2), 2);
+
+        Mockito.when(service.list(0, 2, NotificationType.PURCHASE_CONFIRMATION))
+                .thenReturn(page);
+
         mvc.perform(get("/notifications")
-                        .param("page","0")
-                        .param("size","5")
-                        .param("status","SENT")
-                        .param("channel","EMAIL")
-                        .param("type","PURCHASE_CONFIRMATION"))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    void getById_deveRetornar200() throws Exception {
-        when(service.getById(1L))
-                .thenReturn(new NotificationResponseDto(1L, NotificationType.PURCHASE_CONFIRMATION,
-                        NotificationChannel.EMAIL, "ramon@example.com", "Confirmação", "ok",
-                        NotificationStatus.SENT, null, null));
-
-        mvc.perform(get("/notifications/1"))
+                        .param("page", "0")
+                        .param("size", "2")
+                        .param("type", "PURCHASE_CONFIRMATION"))
                 .andExpect(status().isOk());
     }
 }

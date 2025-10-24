@@ -4,8 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record PurchaseConfirmationRequest(
-        String recipientEmail,
+        Long participantId,
         Long eventId,
-        Long reservationId,
-        Integer quantity
+        Long ticketId
 ) {}
