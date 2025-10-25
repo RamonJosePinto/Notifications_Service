@@ -35,6 +35,14 @@ public class NotificationController {
         return ResponseEntity.noContent().build();
     }
 
+    // controller/NotificationController.java
+    @PostMapping("/ticket-canceled")
+    public ResponseEntity<Void> ticketCanceled(@RequestBody TicketCanceledRequest req) {
+        service.ticketCanceled(req);
+        return ResponseEntity.noContent().build();
+    }
+
+
     // ===== Genérico (facilitador de testes) =====
 
 //    @PostMapping

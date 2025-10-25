@@ -116,4 +116,25 @@ public class NotificationService {
                 : repository.findByType(type, p);
         return data.map(this::toDto);
     }
+
+    // service/NotificationService.java
+    @Transactional
+    public void ticketCanceled(TicketCanceledRequest req) {
+        Notification n = Notification.builder()
+                .type(NotificationType.TICKET_CANCELED)
+                .channel(NotificationChannel.IN_APP)
+                .participantId(req.participantId())
+                .eventId(req.eventId())
+                .ticketId(req.ticketId())
+                .status(NotificationStatus.PENDING)
+                .subject("Seu ingresso foi cancelado")
+                .message("Ticket %d para evento %d foi cancelado. %s"
+                        .formatted(req.ticketId(), req.eventId(),
+                                req.reason() != null ? "Motivo: " + req.reason() : ""))
+                .createdAt(OffsetDateTime.now())
+                .build();
+        repository.save(n);
+        log.info("[mock] Notificação de cancelamento registrada: {}", n.getId());
+    }
+
 }
