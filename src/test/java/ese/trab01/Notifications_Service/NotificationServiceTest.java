@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -30,7 +32,8 @@ class NotificationServiceTest {
 
     @Test
     void purchaseConfirmation_salvaNotificacao() {
-        var req = new PurchaseConfirmationRequest(23L, 1L, 10L);
+        UUID participanteId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+        var req = new PurchaseConfirmationRequest(participanteId, 1L, 10L);
 
         service.purchaseConfirmation(req);
 
@@ -47,7 +50,8 @@ class NotificationServiceTest {
 
     @Test
     void registrationConfirmation_salvaNotificacao() {
-        var req = new RegistrationConfirmationRequest(23L);
+        UUID participanteId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+        var req = new RegistrationConfirmationRequest(participanteId);
 
         service.registrationConfirmation(req);
 
@@ -61,7 +65,8 @@ class NotificationServiceTest {
 
     @Test
     void eventReminder_salvaNotificacao() {
-        var req = new EventReminderRequest(23L, 1L, null, null);
+        UUID participanteId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+        var req = new EventReminderRequest(participanteId, 1L, null, null);
 
         service.eventReminder(req);
 

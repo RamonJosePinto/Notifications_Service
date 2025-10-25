@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -41,12 +42,13 @@ class NotificationControllerTest {
     private NotificationService service;
 
     private NotificationResponseDto sampleDto(long id) {
+        UUID participanteId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
         return new NotificationResponseDto(
                 id,
                 NotificationType.PURCHASE_CONFIRMATION,
                 NotificationChannel.EMAIL,
                 NotificationStatus.PENDING,
-                23L,             // participantId
+                participanteId,             // participantId
                 1L,              // eventId
                 10L,             // ticketId
                 null,            // recipient (mockado, opcional)
@@ -59,9 +61,10 @@ class NotificationControllerTest {
 
     @Test
     void purchaseConfirmation_deveRetornar204() throws Exception {
+        UUID participanteId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
         doNothing().when(service).purchaseConfirmation(any(PurchaseConfirmationRequest.class));
 
-        var req = new PurchaseConfirmationRequest(23L, 1L, 10L);
+        var req = new PurchaseConfirmationRequest(participanteId, 1L, 10L);
 
         mvc.perform(post("/notifications/purchase-confirmation")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -71,9 +74,10 @@ class NotificationControllerTest {
 
     @Test
     void registrationConfirmation_deveRetornar204() throws Exception {
+        UUID participanteId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
         doNothing().when(service).registrationConfirmation(any(RegistrationConfirmationRequest.class));
 
-        var req = new RegistrationConfirmationRequest(23L);
+        var req = new RegistrationConfirmationRequest(participanteId);
 
         mvc.perform(post("/notifications/registration-confirmation")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -83,9 +87,10 @@ class NotificationControllerTest {
 
     @Test
     void eventReminder_deveRetornar204() throws Exception {
+        UUID participanteId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
         doNothing().when(service).eventReminder(any(EventReminderRequest.class));
 
-        var req = new EventReminderRequest(23L, 1L, null, null);
+        var req = new EventReminderRequest(participanteId, 1L, null, null);
 
         mvc.perform(post("/notifications/event-reminder")
                         .contentType(MediaType.APPLICATION_JSON)

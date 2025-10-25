@@ -3,6 +3,7 @@ package ese.trab01.Notifications_Service.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "notifications")
@@ -22,7 +23,7 @@ public class Notification {
     private NotificationChannel channel;    // EMAIL, SMS, IN_APP (usaremos IN_APP como padrão do mock)
 
     // >>> Novo modelo coerente com os demais serviços
-    private Long participantId;
+    private UUID participantId;
     private Long eventId;
     private Long ticketId;
 

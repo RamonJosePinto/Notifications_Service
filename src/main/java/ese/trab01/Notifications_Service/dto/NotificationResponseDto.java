@@ -5,13 +5,14 @@ import ese.trab01.Notifications_Service.model.NotificationStatus;
 import ese.trab01.Notifications_Service.model.NotificationType;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 public record NotificationResponseDto(
         Long id,
         NotificationType type,
         NotificationChannel channel,
         NotificationStatus status,
-        Long participantId,
+        UUID participantId,
         Long eventId,
         Long ticketId,
         String recipient,
