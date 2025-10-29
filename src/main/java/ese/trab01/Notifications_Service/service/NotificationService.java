@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -136,5 +137,28 @@ public class NotificationService {
         repository.save(n);
         log.info("[mock] Notificação de cancelamento registrada: {}", n.getId());
     }
+
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public Page<NotificationResponseDto> buscarNotificacoesDoParticipante(UUID organizerId, Pageable pageable) {
+        return repository.findByParticipantId(organizerId, pageable).map(this::paraRespostaDto);
+    }
+
+    private NotificationResponseDto paraRespostaDto(ese.trab01.Notifications_Service.model.Notification n) {
+        return new NotificationResponseDto(
+                n.getId(),
+                n.getType(),
+                n.getChannel(),
+                n.getStatus(),
+                n.getParticipantId(),
+                n.getEventId(),
+                n.getTicketId(),
+                n.getRecipient(),
+                n.getSubject(),
+                n.getMessage(),
+                n.getCreatedAt(),
+                n.getSentAt()
+        );
+    }
+
 
 }

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
@@ -17,6 +18,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     Page<Notification> findByChannel(NotificationChannel channel, Pageable pageable);
 
     Page<Notification> findByType(NotificationType type, Pageable pageable);
+
+    Page<Notification> findByParticipantId(UUID participantId, Pageable pageable);
 
     Page<Notification> findByRecipientContainingIgnoreCase(String recipient, Pageable pageable);
 
