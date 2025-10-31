@@ -30,8 +30,6 @@ public class NotificationService {
         );
     }
 
-    // ===== Fluxos de negócio (mock) =====
-
     @Transactional
     public void purchaseConfirmation(PurchaseConfirmationRequest req) {
         Notification n = Notification.builder()
@@ -83,25 +81,6 @@ public class NotificationService {
         log.info("[mock] Notificação de lembrete registrada: {}", n.getId());
     }
 
-    // ===== Genérico (útil para testes manuais) =====
-
-    @Transactional
-    public NotificationResponseDto sendGeneric(NotificationRequestDto body, NotificationType type) {
-        Notification n = Notification.builder()
-                .type(type)
-                .channel(body.getChannel())
-                .recipient(body.getRecipient())
-                .subject(body.getSubject())
-                .message(body.getMessage())
-                .status(NotificationStatus.PENDING)
-                .createdAt(OffsetDateTime.now())
-                .build();
-        repository.save(n);
-        return toDto(n);
-    }
-
-    // ===== Queries =====
-
     @Transactional(readOnly = true)
     public NotificationResponseDto getById(Long id) {
         Notification n = repository.findById(id)
@@ -118,7 +97,6 @@ public class NotificationService {
         return data.map(this::toDto);
     }
 
-    // service/NotificationService.java
     @Transactional
     public void ticketCanceled(TicketCanceledRequest req) {
         Notification n = Notification.builder()

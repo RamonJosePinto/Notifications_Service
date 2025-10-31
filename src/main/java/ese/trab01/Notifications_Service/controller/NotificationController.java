@@ -19,8 +19,6 @@ public class NotificationController {
 
     private final NotificationService service;
 
-    // ===== Endpoints usados por outros serviços =====
-
     @PostMapping("/purchase-confirmation")
     public ResponseEntity<Void> purchase(@RequestBody PurchaseConfirmationRequest req) {
         service.purchaseConfirmation(req);
@@ -39,25 +37,12 @@ public class NotificationController {
         return ResponseEntity.noContent().build();
     }
 
-    // controller/NotificationController.java
     @PostMapping("/ticket-canceled")
     public ResponseEntity<Void> ticketCanceled(@RequestBody TicketCanceledRequest req) {
         service.ticketCanceled(req);
         return ResponseEntity.noContent().build();
     }
 
-
-    // ===== Genérico (facilitador de testes) =====
-
-//    @PostMapping
-//    public ResponseEntity<NotificationResponseDto> generic(
-//            @RequestParam(defaultValue = "REGISTRATION_CONFIRMATION") NotificationType type,
-//            @RequestBody NotificationRequestDto body
-//    ) {
-//        return ResponseEntity.ok(service.sendGeneric(body, type));
-//    }
-
-    // ===== Consultas =====
 
     @GetMapping("/find/{id}")
     public ResponseEntity<NotificationResponseDto> get(@PathVariable Long id) {

@@ -16,26 +16,24 @@ public class Notification {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private NotificationType type;          // REGISTRATION_CONFIRMATION, PURCHASE_CONFIRMATION, EVENT_REMINDER
+    private NotificationType type;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private NotificationChannel channel;    // EMAIL, SMS, IN_APP (usaremos IN_APP como padrão do mock)
+    private NotificationChannel channel;
 
-    // >>> Novo modelo coerente com os demais serviços
     private UUID participantId;
     private Long eventId;
     private Long ticketId;
 
-    // >>> Mantidos para o endpoint genérico / compatibilidade
-    private String recipient;               // e-mail, telefone, etc (opcional no mock)
-    private String subject;                 // opcional
+    private String recipient;
+    private String subject;
     @Column(length = 4000)
-    private String message;                 // opcional
+    private String message;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private NotificationStatus status;      // PENDING, SENT, FAILED (mock: PENDING)
+    private NotificationStatus status;
 
     @Column(nullable = false)
     private OffsetDateTime createdAt;
@@ -43,5 +41,5 @@ public class Notification {
     private OffsetDateTime sentAt;
 
     @Column(length = 2000)
-    private String metadata;                // JSON/texto livre com extras (opcional)
+    private String metadata;
 }

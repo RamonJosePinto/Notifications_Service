@@ -48,19 +48,19 @@ class NotificationControllerTest {
                 NotificationType.PURCHASE_CONFIRMATION,
                 NotificationChannel.EMAIL,
                 NotificationStatus.PENDING,
-                participanteId,             // participantId
-                1L,              // eventId
-                10L,             // ticketId
-                null,            // recipient (mockado, opcional)
+                participanteId,
+                1L,
+                10L,
+                null,
                 "Assunto",
                 "Mensagem",
                 OffsetDateTime.now(),
-                null             // sentAt
+                null
         );
     }
 
     @Test
-    void purchaseConfirmation_deveRetornar204() throws Exception {
+    void purchaseConfirmation_ShouldReturn204() throws Exception {
         UUID participanteId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
         doNothing().when(service).purchaseConfirmation(any(PurchaseConfirmationRequest.class));
 
@@ -73,7 +73,7 @@ class NotificationControllerTest {
     }
 
     @Test
-    void registrationConfirmation_deveRetornar204() throws Exception {
+    void registrationConfirmation_ShouldReturn204() throws Exception {
         UUID participanteId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
         doNothing().when(service).registrationConfirmation(any(RegistrationConfirmationRequest.class));
 
@@ -86,7 +86,7 @@ class NotificationControllerTest {
     }
 
     @Test
-    void eventReminder_deveRetornar204() throws Exception {
+    void eventReminder_ShouldReturn204() throws Exception {
         UUID participanteId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
         doNothing().when(service).eventReminder(any(EventReminderRequest.class));
 
@@ -99,16 +99,16 @@ class NotificationControllerTest {
     }
 
     @Test
-    void getById_deveRetornar200_comCorpo() throws Exception {
+    void getById_ShouldReturn200_WithBody() throws Exception {
         Mockito.when(service.getById(5L)).thenReturn(sampleDto(5));
 
-        mvc.perform(get("/notifications/5"))
+        mvc.perform(get("/notifications/find/5"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(5));
     }
 
     @Test
-    void list_deveRetornar200_paginado() throws Exception {
+    void list_ShouldReturn200_Paginated() throws Exception {
         Page<NotificationResponseDto> page =
                 new PageImpl<>(List.of(sampleDto(1), sampleDto(2)), PageRequest.of(0, 2), 2);
 

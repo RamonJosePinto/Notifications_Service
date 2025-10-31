@@ -7,5 +7,5 @@ public record TicketCanceledRequest(
         UUID participantId,
         Long eventId,
         Long ticketId,
-        String reason // opcional
+        String reason
 ) {}

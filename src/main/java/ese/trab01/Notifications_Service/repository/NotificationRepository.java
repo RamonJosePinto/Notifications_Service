@@ -13,24 +13,8 @@ import java.util.UUID;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    Page<Notification> findByStatus(NotificationStatus status, Pageable pageable);
-
-    Page<Notification> findByChannel(NotificationChannel channel, Pageable pageable);
-
     Page<Notification> findByType(NotificationType type, Pageable pageable);
 
     Page<Notification> findByParticipantId(UUID participantId, Pageable pageable);
 
-    Page<Notification> findByRecipientContainingIgnoreCase(String recipient, Pageable pageable);
-
-    // Combinações úteis (opcional):
-    Page<Notification> findByStatusAndChannel(NotificationStatus status, NotificationChannel channel, Pageable pageable);
-
-    Page<Notification> findByStatusAndType(NotificationStatus status, NotificationType type, Pageable pageable);
-
-    Page<Notification> findByChannelAndType(NotificationChannel channel, NotificationType type, Pageable pageable);
-
-    Page<Notification> findByStatusAndChannelAndType(
-            NotificationStatus status, NotificationChannel channel, NotificationType type, Pageable pageable
-    );
 }

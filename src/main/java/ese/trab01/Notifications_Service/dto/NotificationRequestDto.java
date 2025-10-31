@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class NotificationRequestDto {
 
     @NotBlank(message = "O destinatário é obrigatório.")
-    private String recipient; // e-mail, telefone ou identificador do usuário (para IN_APP)
+    private String recipient;
 
     @NotBlank(message = "O assunto é obrigatório.")
     @Size(max = 120, message = "O assunto deve ter no máximo 120 caracteres.")
@@ -27,6 +27,6 @@ public class NotificationRequestDto {
     private String message;
 
     @NotNull(message = "O canal é obrigatório.")
-    private NotificationChannel channel; // EMAIL, SMS, IN_APP
+    private NotificationChannel channel;
 
 }
